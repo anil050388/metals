@@ -100,7 +100,7 @@ app.layout = html.Div([
 
                 dbc.Col([
                     dbc.Card([
-                        dbc.CardImg(src="/assets/platinum.jpg", top=True),
+                        dbc.CardImg(src="/assets/Platinum.jpg", top=True),
                         html.Div([
                             dbc.CardBody([
                                 html.H3(id='Platinum_Card'),
@@ -112,7 +112,7 @@ app.layout = html.Div([
 
                 dbc.Col([
                     dbc.Card([
-                        dbc.CardImg(src="/assets/palladium.jpg", top=True),
+                        dbc.CardImg(src="/assets/Palladium.jpg", top=True),
                         html.Div([
                             dbc.CardBody([
                                 html.H3(id='palladium_Card'),
