@@ -5,6 +5,13 @@ body {
   margin: 1%;
 }
 
+h1 {
+  font-size: 4rem;
+  text-align: center;
+  font-family:fantasy;
+  color: gold;
+}
+
 .container_first,.card_container1, .card_container3 {
   display: flex;
   justify-content: space-between;
