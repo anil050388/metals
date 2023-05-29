@@ -15,6 +15,7 @@ metaTags = [
 stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = Dash(__name__, meta_tags=metaTags, external_stylesheets=[
            dbc.themes.DARKLY, dbc.icons.BOOTSTRAP])
+server = app.server
 
 # Retrieve the Unique Country codes
 df = pd.read_excel('curency1.xlsx')
