@@ -498,4 +498,4 @@ def displayClick(btn1, btn2, btn3, btn4, btn5, btn6, country_dropdown): #radio_i
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=True, port=8050)
