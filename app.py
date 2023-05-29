@@ -34,12 +34,16 @@ fig = go.Figure()
 
 app.layout = html.Div([
 
-    dcc.Interval(id='update_value',
-                 interval=1 * 16000,
-                 n_intervals=0),
+    # dcc.Interval(id='update_value',
+    #              interval=1 * 16000,
+    #              n_intervals=0),
+    
+    html.Div([
+        html.H1("Precious Metal Values - Around the Globe (Per Ounce)")
+    ]),
 
     html.Div([
-        dbc.Spinner(html.Div(id='data_update_time'))
+        dbc.Spinner(html.Div(id ='data_update_time'))
     ], className="timer"),
     html.Br(),
     dbc.Container([
@@ -96,7 +100,7 @@ app.layout = html.Div([
 
                 dbc.Col([
                     dbc.Card([
-                        dbc.CardImg(src="/assets/Platinum.jpg", top=True),
+                        dbc.CardImg(src="/assets/platinum.jpg", top=True),
                         html.Div([
                             dbc.CardBody([
                                 html.H3(id='Platinum_Card'),
@@ -108,7 +112,7 @@ app.layout = html.Div([
 
                 dbc.Col([
                     dbc.Card([
-                        dbc.CardImg(src="/assets/Palladium.jpg", top=True),
+                        dbc.CardImg(src="/assets/palladium.jpg", top=True),
                         html.Div([
                             dbc.CardBody([
                                 html.H3(id='palladium_Card'),
@@ -270,18 +274,18 @@ def update_value(country_dropdown):
                                'flex-direction': 'column'})
 
 
-@app.callback(Output('data_update_time', 'children'),
-              [Input('update_value', 'n_intervals')])
-def update_value(n_intervals):
-    current_date = datetime.today()
-    current_date = datetime.strftime(current_date, '%Y-%m-%d %H:%M:%S')
-    return [
-        html.Div([
-            html.Div('Last data update time:', style={
-                     'justify-content': 'right'}),
-            html.Div(current_date, className='location_name')
-        ], className='date_time_row')
-    ]
+# @app.callback(Output('data_update_time', 'children'),
+#               [Input('update_value', 'n_intervals')])
+# def update_value(n_intervals):
+#     current_date = datetime.today()
+#     current_date = datetime.strftime(current_date, '%Y-%m-%d %H:%M:%S')
+#     return [
+#         html.Div([
+#             html.Div('Last data update time:', style={
+#                      'justify-content': 'right'}),
+#             html.Div(current_date, className='location_name')
+#         ], className='date_time_row')
+#     ]
 
 
 @app.callback(
@@ -314,12 +318,12 @@ def displayClick(btn1, btn2, btn3, btn4, btn5, btn6, country_dropdown): #radio_i
         day = 7
         msg = "Button 2 was most recently clicked"
     elif "Month" == ctx.triggered_id:
-        text = 'Month'
+        text = '1 Month'
         per_text = 'Last Month'
         day = 30
         msg = "Button 3 was most recently clicked"
     elif "Year" == ctx.triggered_id:
-        text = 'Year'
+        text = '1 Year'
         per_text = 'Last Year'
         day = 365
         msg = "Button 4 was most recently clicked"
@@ -483,7 +487,7 @@ def displayClick(btn1, btn2, btn3, btn4, btn5, btn6, country_dropdown): #radio_i
                                      name='<b> Palladium </b>',))
 
         fig.update_layout(legend_title='<b> Metals </b>',
-                          title_text=text + ' trajectory',
+                          title_text=text + ' History',
                           title_x=0.5,
                           title_font_color='white',
                           plot_bgcolor='rgb(17,17,17)',
