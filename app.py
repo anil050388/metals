@@ -83,7 +83,7 @@ app.layout = html.Div([
                     style={'font-size': 15, 'padding-left': 30, 'color': 'white'})], 'value': 'Ounce'}
             ],
             value='Ounce',
-            inline=True, style={'padding': '5px'}
+            inline=True, style={'padding': '5px', 'color':'white'}
         )
     ], className="radio"),
 
@@ -198,7 +198,7 @@ app.layout = html.Div([
         dbc.Row([
             dbc.Col([
 
-                dbc.Label("Show number of rows", id="rowstable"),
+                dbc.Label("Show number of rows", id="rowstable", style={'color':'white'}),
                 dcc.Dropdown(
                     id="row_drop",
                     multi=False,
@@ -372,7 +372,7 @@ def update_value(n_intervals):
     return [
         html.Div([
             html.Div('Last data update date:', style={
-                     'text-align': 'right'}),
+                     'text-align': 'right','color':'white'}),
             html.Div(current_date, className='location_name')
         ], className='date_time_row')
     ]
