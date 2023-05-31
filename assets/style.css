@@ -42,9 +42,13 @@ h1 {
   flex-wrap: wrap;
 }
 
-#my_table, #radio_items {
+#my_table {
   color: white;
   background-color: black;
+}
+
+# radio_items {
+  background-color: #192444;
 }
 
 .linechart1 {
