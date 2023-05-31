@@ -188,7 +188,7 @@ app.layout = html.Div([
             dbc.Col([
                 dcc.Graph(id="line_chart", config={'displayModeBar': False,
                                                    'displaylogo': False,
-                                                   'scrollZoom': True,
+                                                   'scrollZoom': False,
                                                    'showAxisDragHandles': True,
                                                    'showAxisRangeEntryBoxes': True},
                           style={'background': 'black', 'padding-bottom': '0px', 'padding-left': '0px', 'height': '90vh', 'width': '80vw'})
@@ -197,6 +197,14 @@ app.layout = html.Div([
 
         dbc.Row([
             dbc.Col([
+
+                dbc.Label("Show number of rows", id="rowstable"),
+                dcc.Dropdown(
+                    id="row_drop",
+                    multi=False,
+                    options=[10, 25, 50, 100],
+                    value=10, clearable=False, style={'width': '35%'}),
+                    
                 my_table := dash_table.DataTable(
                     # columns=[
                     #     {'name': 'Dates', 'id': 'Dates', 'type': 'text'},
@@ -208,7 +216,7 @@ app.layout = html.Div([
                     style_cell={'textAlign': 'left',
                                 'font-family': 'sans-serif'
                                 },
-                    page_size=10,
+                    # page_size=10,
 
 
                     style_data={
@@ -224,10 +232,6 @@ app.layout = html.Div([
                     style_header={'font-weight': 'Bold',
                                   'border': '1px solid pink'}
                 ),
-
-                dbc.Label("Show number of rows", id="rowstable"),
-                row_drop := dcc.Dropdown(value=10, clearable=False, style={'width': '35%'}, options=[10, 25, 50, 100]),
-
             ], className="mytable text-center")
         ])
 
@@ -391,7 +395,7 @@ def update_value(n_intervals):
     Input('Year10', 'n_clicks'),
     Input('country_dropdown', 'value'),
     Input('radio_items', 'value'),
-    Input(row_drop, 'value')
+    Input('row_drop', 'value')
 )
 # radio_items):
 def displayClick(btn1, btn2, btn3, btn4, btn5, btn6, country_dropdown,
@@ -620,10 +624,10 @@ def displayClick(btn1, btn2, btn3, btn4, btn5, btn6, country_dropdown,
                           title_text=text + ' History',
                           title_x=0.5,
                           title_font_color='white',
-                          font_color="blue",
+                          font_color="white",
                           plot_bgcolor='rgb(17,17,17)',
                           paper_bgcolor='rgb(17,17,17)',
-                          legend=dict(bgcolor='white',
+                          legend=dict(bgcolor='black',
                                         font=dict(family="sans-serif",
                                                   size=14,
                                                   color='chocolate'))
