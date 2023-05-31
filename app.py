@@ -191,7 +191,7 @@ app.layout = html.Div([
                                                    'scrollZoom': True,
                                                    'showAxisDragHandles': True,
                                                    'showAxisRangeEntryBoxes': True},
-                          style={'background': 'black', 'padding-bottom': '0px', 'padding-left': '0px', 'height': '90vh', 'width': '156vh'})
+                          style={'background': 'black', 'padding-bottom': '0px', 'padding-left': '0px', 'height': '90vh', 'width': '80vw'})
             ], className="linechart1 text-center")
         ]),
 
