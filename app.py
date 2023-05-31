@@ -82,7 +82,7 @@ app.layout = html.Div([
                 {'label': ['Ounce', html.Span(
                     style={'font-size': 15, 'padding-left': 30, 'color': 'white'})], 'value': 'Ounce'}
             ],
-            value='Ounce',
+            value='Grams',
             inline=True, style={'padding': '5px', 'color':'white'}
         )
     ], className="radio"),
