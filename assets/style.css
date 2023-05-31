@@ -35,11 +35,20 @@ h1 {
   width: 100%;
   color: white;
 }
-
+/* 
 .percentage_gold, .percentage_silver, .percentage_platinum, .percentage_palladium ,.country_dropdown{
   flex-direction:column;
   display: flex;
   flex-wrap: wrap;
+} */
+
+#percentage_gold,#percentage_silver,#percentage_platinum, 
+#percentage_palladium ,#country_dropdown{
+  flex-direction:column;
+  display:flex;
+  flex-wrap:wrap;
+  text-align: center;
+  justify-content: space-between;
 }
 
 #my_table {
