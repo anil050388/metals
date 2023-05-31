@@ -60,8 +60,7 @@ app.layout = html.Div([
                             value=Country_Codes[0],
                             clearable=False,
                             style={'background': '#01020e', 'margin': '0px',
-                                   'font-weight': 'bold',
-                                  'color':'white'}
+                                   'font-weight': 'bold'}
                         )
                     ]),
                 ], className="seven columns"),
