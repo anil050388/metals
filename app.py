@@ -1,5 +1,5 @@
 from dash.dependencies import Input, Output
-from dash import Dash, html, Input, Output, ctx, dcc
+from dash import Dash, html, Input, Output, ctx, dcc, dash_table
 import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.express as px
@@ -23,6 +23,8 @@ df = df[df['Symbol'] != '']
 df = df[df['Currency Code'] != 'XOF']
 Country_Codes = df['Country_x'].unique()
 
+# df_table = pd.DataFrame()
+# df_table.columns = ['Dates','Gold','Silver','Platinum','Palladium']
 # Read Gold Price Sheet
 GoldPrice = pd.read_excel('GoldPrice.xlsx')
 SilverPrice = pd.read_excel('SilverPrice.xlsx')
@@ -34,18 +36,16 @@ fig = go.Figure()
 
 app.layout = html.Div([
 
-    # dcc.Interval(id='update_value',
-    #              interval=1 * 16000,
-    #              n_intervals=0),
-    
-    html.Div([
-        html.H1("Precious Metal Values - Around the Globe (Per Ounce)")
-    ]),
+    dcc.Interval(id='update_value',
+                 interval=1 * 16000,
+                 n_intervals=0),
 
     html.Div([
-        dbc.Spinner(html.Div(id ='data_update_time'))
-    ], className="timer"),
-    html.Br(),
+        html.H1("Precious Metal Values - Around the Globe")
+    ]),
+
+
+    # html.Br(),
     dbc.Container([
         dbc.Row([
                 dbc.Col([
@@ -63,15 +63,30 @@ app.layout = html.Div([
                                    'font-weight': 'bold'}
                         )
                     ]),
-                ], className="six columns"),
+                ], className="seven columns"),
 
                 dbc.Col([
                     html.Div(
                         html.Div(id='Country_Image')
                     ),
-                ], className="six columns"),
+                ], className="five columns"),
                 ])
     ], className="container_first display_row_center row"),
+
+    html.Div([
+        dcc.RadioItems(
+            id='radio_items',
+            options=[
+                {'label': ['Grams', html.Span(
+                    style={'font-size': 15, 'padding-left': 30})], 'value': 'Grams'},
+                {'label': ['Ounce', html.Span(
+                    style={'font-size': 15, 'padding-left': 30})], 'value': 'Ounce'}
+            ],
+            value='Ounce',
+            inline=True, style={'padding': '5px'}
+        )
+    ], className="radio"),
+
     dbc.Container([
         dbc.Row([
                 dbc.Col([
@@ -176,16 +191,44 @@ app.layout = html.Div([
                                                    'scrollZoom': False},
                           style={'background': 'black', 'padding-bottom': '0px', 'padding-left': '0px', 'height': '80vh'})
             ], className="linechart1 text-center")
+        ]),
+
+        dbc.Row([
+            dbc.Col([
+                my_table := dash_table.DataTable(
+                    # columns=[
+                    #     {'name': 'Dates', 'id': 'Dates', 'type': 'text'},
+                    #     {'name': 'Gold', 'id': 'Gold', 'type': 'text'},
+                    #     {'name': 'Silver', 'id': 'Silver', 'type': 'text'},
+                    #     {'name': 'Platinum', 'id': 'Platinum', 'type': 'text'},
+                    #     {'name': 'Palladium', 'id': 'Palladium', 'type': 'text'},
+                    # ],
+                    style_cell={'textAlign': 'left',
+                                'font-family': 'sans-serif'
+                                },
+                    page_size=10,
+                ),
+
+                dbc.Label("Show number of rows", id="rowstable"),
+                row_drop := dcc.Dropdown(value=10, clearable=False, style={'width': '35%'}, options=[10, 25, 50, 100]),
+
+            ], className="mytable text-center")
         ])
+
     ], className="card_container4"),
+
+    html.Div([
+        dbc.Spinner(html.Div(id='data_update_time'))
+    ], className="timer"),
 ])
 
 # Curr_Symbol
 
 
 @app.callback(Output('Silver_Card', 'children'),
-              [Input('country_dropdown', 'value')])
-def updatecard(country_dropdown):
+              [Input('country_dropdown', 'value'),
+               Input('radio_items', 'value')])
+def updatecard(country_dropdown, radio_items):
     if country_dropdown:
         symbol = df[df['Country_x'] == country_dropdown]['Symbol'].unique()
         symbol = symbol[0]
@@ -195,7 +238,12 @@ def updatecard(country_dropdown):
         Current = SilverPrice[['IDate', currencyCode]].tail(1)
         CurrentDate = datetime.strptime(
             Current['IDate'].to_string(index=False), '%Y-%m-%d').date()
-        Curr_price = float(Current[currencyCode].to_string(index=False))
+
+        if radio_items == 'Ounce':
+            Curr_price = float(Current[currencyCode].to_string(index=False))
+        elif radio_items == 'Grams':
+            Curr_price = float(Current[currencyCode].to_string(
+                index=False))/(28.3495231)
         CurrentPrice = numerize.numerize(Curr_price)
         CurrentPrice = str(CurrentPrice)
         symbol = symbol + ' ' + CurrentPrice
@@ -203,8 +251,9 @@ def updatecard(country_dropdown):
 
 
 @app.callback(Output('Platinum_Card', 'children'),
-              [Input('country_dropdown', 'value')])
-def updatecard(country_dropdown):
+              [Input('country_dropdown', 'value'),
+               Input('radio_items', 'value')])
+def updatecard(country_dropdown, radio_items):
     if country_dropdown:
         symbol = df[df['Country_x'] == country_dropdown]['Symbol'].unique()
         symbol = symbol[0]
@@ -212,9 +261,15 @@ def updatecard(country_dropdown):
                           country_dropdown]['Currency Code'].unique()
         currencyCode = currencyCode[0]
         Current = PlatinumPrice[['IDate', currencyCode]].tail(1)
-        CurrentDate = datetime.strptime(
-            Current['IDate'].to_string(index=False), '%Y-%m-%d').date()
-        Curr_price = float(Current[currencyCode].to_string(index=False))
+        CurrentDate = datetime.strptime(Current['IDate'].to_string
+                                        (index=False), '%Y-%m-%d').date()
+
+        if radio_items == 'Ounce':
+            Curr_price = float(Current[currencyCode].to_string(index=False))
+        elif radio_items == 'Grams':
+            Curr_price = float(Current[currencyCode].to_string(
+                index=False))/(28.3495231)
+
         CurrentPrice = numerize.numerize(Curr_price)
         CurrentPrice = str(CurrentPrice)
         symbol = symbol + ' ' + CurrentPrice
@@ -222,8 +277,9 @@ def updatecard(country_dropdown):
 
 
 @app.callback(Output('palladium_Card', 'children'),
-              [Input('country_dropdown', 'value')])
-def updatecard(country_dropdown):
+              [Input('country_dropdown', 'value'),
+               Input('radio_items', 'value')])
+def updatecard(country_dropdown, radio_items):
     if country_dropdown:
         symbol = df[df['Country_x'] == country_dropdown]['Symbol'].unique()
         symbol = symbol[0]
@@ -231,9 +287,14 @@ def updatecard(country_dropdown):
                           country_dropdown]['Currency Code'].unique()
         currencyCode = currencyCode[0]
         Current = PalladiumPrice[['IDate', currencyCode]].tail(1)
-        CurrentDate = datetime.strptime(
-            Current['IDate'].to_string(index=False), '%Y-%m-%d').date()
-        Curr_price = float(Current[currencyCode].to_string(index=False))
+        CurrentDate = datetime.strptime(Current['IDate'].to_string
+                                        (index=False), '%Y-%m-%d').date()
+        if radio_items == 'Ounce':
+            Curr_price = float(Current[currencyCode].to_string(index=False))
+        elif radio_items == 'Grams':
+            Curr_price = float(Current[currencyCode].to_string(
+                index=False)) / (28.3495231)
+
         CurrentPrice = numerize.numerize(Curr_price)
         CurrentPrice = str(CurrentPrice)
         symbol = symbol + ' ' + CurrentPrice
@@ -241,8 +302,9 @@ def updatecard(country_dropdown):
 
 
 @app.callback(Output('Gold_Card', 'children'),
-              [Input('country_dropdown', 'value')])
-def updatecard(country_dropdown):
+              [Input('country_dropdown', 'value'),
+               Input('radio_items', 'value')])
+def updatecard(country_dropdown, radio_items):
     if country_dropdown:
         symbol = df[df['Country_x'] == country_dropdown]['Symbol'].unique()
         symbol = symbol[0]
@@ -252,7 +314,13 @@ def updatecard(country_dropdown):
         Current = GoldPrice[['IDate', currencyCode]].tail(1)
         CurrentDate = datetime.strptime(
             Current['IDate'].to_string(index=False), '%Y-%m-%d').date()
-        Curr_price = float(Current[currencyCode].to_string(index=False))
+
+        if radio_items == 'Ounce':
+            Curr_price = float(Current[currencyCode].to_string(index=False))
+        elif radio_items == 'Grams':
+            Curr_price = float(Current[currencyCode].to_string(
+                index=False))/(28.3495231)
+
         CurrentPrice = numerize.numerize(Curr_price)
         CurrentPrice = str(CurrentPrice)
         symbol = symbol + ' ' + CurrentPrice
@@ -274,23 +342,27 @@ def update_value(country_dropdown):
                                'flex-direction': 'column'})
 
 
-# @app.callback(Output('data_update_time', 'children'),
-#               [Input('update_value', 'n_intervals')])
-# def update_value(n_intervals):
-#     current_date = datetime.today()
-#     current_date = datetime.strftime(current_date, '%Y-%m-%d %H:%M:%S')
-#     return [
-#         html.Div([
-#             html.Div('Last data update time:', style={
-#                      'justify-content': 'right'}),
-#             html.Div(current_date, className='location_name')
-#         ], className='date_time_row')
-#     ]
+@app.callback(Output('data_update_time', 'children'),
+              [Input('update_value', 'n_intervals')])
+def update_value(n_intervals):
+    dates = GoldPrice.tail(1)['IDate'].to_string(index=False)
+    # current_date = datetime.today()
+    # current_date = datetime.strftime(current_date, '%Y-%m-%d %H:%M:%S')
+    current_date = dates
+    return [
+        html.Div([
+            html.Div('Last data update date:', style={
+                     'text-align': 'right'}),
+            html.Div(current_date, className='location_name')
+        ], className='date_time_row')
+    ]
 
 
 @app.callback(
     [Output('container-button-timestamp', 'children'),
      Output('line_chart', 'figure'),
+     Output(my_table, 'data'),
+     Output(my_table, 'page_size'),
      Output('percentage_gold', 'children'),
      Output('percentage_silver', 'children'),
      Output('percentage_platinum', 'children'),
@@ -301,10 +373,13 @@ def update_value(country_dropdown):
     Input('Year', 'n_clicks'),
     Input('Year5', 'n_clicks'),
     Input('Year10', 'n_clicks'),
-    Input('country_dropdown', 'value')
-    # Input('radio_items', 'value')
+    Input('country_dropdown', 'value'),
+    Input('radio_items', 'value'),
+    Input(row_drop, 'value')
 )
-def displayClick(btn1, btn2, btn3, btn4, btn5, btn6, country_dropdown): #radio_items):
+# radio_items):
+def displayClick(btn1, btn2, btn3, btn4, btn5, btn6, country_dropdown,
+                 radio_items1, row_drop):
     day = 0
     text = ''
     msg = "None of the buttons have been clicked yet"
@@ -457,31 +532,65 @@ def displayClick(btn1, btn2, btn3, btn4, btn5, btn6, country_dropdown): #radio_i
         fig = go.Figure()
         radio_items = ''
         if radio_items == '':
-            fig.add_trace(go.Scatter(x=GoldPrice_week["IDate"], 
+            if radio_items1 == 'Grams':
+                GoldPrice_week[currencyCode] = GoldPrice_week[currencyCode] / \
+                    (28.3495231)
+                SilverPrice_week[currencyCode] = SilverPrice_week[currencyCode] / \
+                    (28.3495231)
+                PlatinumPrice_week[currencyCode] = PlatinumPrice_week[currencyCode]/(
+                    28.3495231)
+                PalladiumPrice_week[currencyCode] = PalladiumPrice_week[currencyCode]/(
+                    28.3495231)
+            df_table = pd.DataFrame({'Dates': [],
+                                    'Gold': [],
+                                    'Silver':[],
+                                    'Platinum':[],
+                                    'Palladium':[]})
+            date_list = []
+            date_list = GoldPrice_week[["IDate"]].to_string(index=False)
+            date_list = list(date_list.split("\n"))
+
+            goldlist = GoldPrice_week[[currencyCode]].to_string(index=False)
+            goldlist = list(goldlist.split("\n"))
+
+            silverlist = SilverPrice_week[[currencyCode]].to_string(index=False)
+            silverlist = list(silverlist.split("\n"))
+
+            platinumlist = PlatinumPrice_week[[currencyCode]].to_string(index=False)
+            platinumlist = list(platinumlist.split("\n"))
+
+            palladiumlist = PalladiumPrice_week[[currencyCode]].to_string(index=False)
+            palladiumlist = list(palladiumlist.split("\n"))
+            df2 = pd.DataFrame(list(zip(date_list[1:],goldlist[1:],silverlist[1:],platinumlist[1:],palladiumlist[1:])))
+            df_table = df2
+            df_table.columns = ['Dates','Gold','Silver','Platinum','Palladium']
+            df_table['Country'] = country_dropdown
+            df_table =  df_table.sort_values(by=['Dates'],ascending=False)
+
+            fig.add_trace(go.Scatter(x=GoldPrice_week["IDate"],
                                      y=GoldPrice_week[currencyCode],
-                                     hovertemplate = '<b>Date </b>: %{x}<br>'+
+                                     hovertemplate='<b>Date </b>: %{x}<br>' +
                                      '<i>Price </i>: %{y:.2f}',
                                      mode='lines',
                                      name='<b> Gold </b>',))
 
             fig.add_trace(go.Scatter(x=SilverPrice_week["IDate"],
                                      y=SilverPrice_week[currencyCode],
-                                     hovertemplate = '<b>Date </b>: %{x}<br>'+
+                                     hovertemplate='<b>Date </b>: %{x}<br>' +
                                      '<i>Price </i>: %{y:.2f}',
                                      mode='lines',
                                      name='<b> Silver </b>',))
 
-
-            fig.add_trace(go.Scatter(x=PlatinumPrice_week["IDate"], 
+            fig.add_trace(go.Scatter(x=PlatinumPrice_week["IDate"],
                                      y=PlatinumPrice_week[currencyCode],
-                                     hovertemplate = '<b>Date </b>: %{x}<br>'+
+                                     hovertemplate='<b>Date </b>: %{x}<br>' +
                                      '<i>Price </i>: %{y:.2f}',
                                      mode='lines',
                                      name='<b> Platinum </b>',))
 
-            fig.add_trace(go.Scatter(x=PalladiumPrice_week["IDate"], 
+            fig.add_trace(go.Scatter(x=PalladiumPrice_week["IDate"],
                                      y=PalladiumPrice_week[currencyCode],
-                                     hovertemplate = '<b>Date </b>: %{x}<br>'+
+                                     hovertemplate='<b>Date </b>: %{x}<br>' +
                                      '<i>Price </i>: %{y:.2f}',
                                      mode='lines',
                                      name='<b> Palladium </b>',))
@@ -492,13 +601,13 @@ def displayClick(btn1, btn2, btn3, btn4, btn5, btn6, country_dropdown): #radio_i
                           title_font_color='white',
                           plot_bgcolor='rgb(17,17,17)',
                           paper_bgcolor='rgb(17,17,17)',
-                          legend = dict(bgcolor = 'white',
+                          legend=dict(bgcolor='white',
                                         font=dict(family="sans-serif",
                                                   size=14,
                                                   color='chocolate'))
                           )
     msg = ""
-    return html.Div(msg), fig, gold_id, silver_id, platinum_id, Palladium_id
+    return html.Div(msg), fig, df_table.to_dict('records'), row_drop, gold_id, silver_id, platinum_id, Palladium_id
 
 
 if __name__ == '__main__':
