@@ -78,9 +78,9 @@ app.layout = html.Div([
             id='radio_items',
             options=[
                 {'label': ['Grams', html.Span(
-                    style={'font-size': 15, 'padding-left': 30})], 'value': 'Grams'},
+                    style={'font-size': 15, 'padding-left': 30, 'color': 'white'})], 'value': 'Grams'},
                 {'label': ['Ounce', html.Span(
-                    style={'font-size': 15, 'padding-left': 30})], 'value': 'Ounce'}
+                    style={'font-size': 15, 'padding-left': 30, 'color': 'white'})], 'value': 'Ounce'}
             ],
             value='Ounce',
             inline=True, style={'padding': '5px'}
@@ -186,10 +186,12 @@ app.layout = html.Div([
         ]),
         dbc.Row([
             dbc.Col([
-                dcc.Graph(id="line_chart", config={'displayModeBar': 'hover',
+                dcc.Graph(id="line_chart", config={'displayModeBar': False,
                                                    'displaylogo': False,
-                                                   'scrollZoom': False},
-                          style={'background': 'black', 'padding-bottom': '0px', 'padding-left': '0px', 'height': '80vh'})
+                                                   'scrollZoom': True,
+                                                   'showAxisDragHandles': True,
+                                                   'showAxisRangeEntryBoxes': True},
+                          style={'background': 'black', 'padding-bottom': '0px', 'padding-left': '0px', 'height': '90vh', 'width': '156vh'})
             ], className="linechart1 text-center")
         ]),
 
@@ -207,6 +209,20 @@ app.layout = html.Div([
                                 'font-family': 'sans-serif'
                                 },
                     page_size=10,
+
+
+                    style_data={
+                        'width': '150px', 'minWidth': '150px', 'maxWidth': '150px',
+                        'overflow': 'hidden',
+                        'textOverflow': 'ellipsis',
+                        'font-family': 'tahoma',
+                        'font-size': '13px',
+                        'direction': 'rtl',
+                        'position': 'relative',
+                        'border': '1px solid blue'
+                    },
+                    style_header={'font-weight': 'Bold',
+                                  'border': '1px solid pink'}
                 ),
 
                 dbc.Label("Show number of rows", id="rowstable"),
@@ -543,9 +559,9 @@ def displayClick(btn1, btn2, btn3, btn4, btn5, btn6, country_dropdown,
                     28.3495231)
             df_table = pd.DataFrame({'Dates': [],
                                     'Gold': [],
-                                    'Silver':[],
-                                    'Platinum':[],
-                                    'Palladium':[]})
+                                     'Silver': [],
+                                     'Platinum': [],
+                                     'Palladium': []})
             date_list = []
             date_list = GoldPrice_week[["IDate"]].to_string(index=False)
             date_list = list(date_list.split("\n"))
@@ -553,19 +569,24 @@ def displayClick(btn1, btn2, btn3, btn4, btn5, btn6, country_dropdown,
             goldlist = GoldPrice_week[[currencyCode]].to_string(index=False)
             goldlist = list(goldlist.split("\n"))
 
-            silverlist = SilverPrice_week[[currencyCode]].to_string(index=False)
+            silverlist = SilverPrice_week[[
+                currencyCode]].to_string(index=False)
             silverlist = list(silverlist.split("\n"))
 
-            platinumlist = PlatinumPrice_week[[currencyCode]].to_string(index=False)
+            platinumlist = PlatinumPrice_week[[
+                currencyCode]].to_string(index=False)
             platinumlist = list(platinumlist.split("\n"))
 
-            palladiumlist = PalladiumPrice_week[[currencyCode]].to_string(index=False)
+            palladiumlist = PalladiumPrice_week[[
+                currencyCode]].to_string(index=False)
             palladiumlist = list(palladiumlist.split("\n"))
-            df2 = pd.DataFrame(list(zip(date_list[1:],goldlist[1:],silverlist[1:],platinumlist[1:],palladiumlist[1:])))
+            df2 = pd.DataFrame(list(zip(
+                date_list[1:], goldlist[1:], silverlist[1:], platinumlist[1:], palladiumlist[1:])))
             df_table = df2
-            df_table.columns = ['Dates','Gold','Silver','Platinum','Palladium']
+            df_table.columns = ['Dates', 'Gold',
+                                'Silver', 'Platinum', 'Palladium']
             df_table['Country'] = country_dropdown
-            df_table =  df_table.sort_values(by=['Dates'],ascending=False)
+            df_table = df_table.sort_values(by=['Dates'], ascending=False)
 
             fig.add_trace(go.Scatter(x=GoldPrice_week["IDate"],
                                      y=GoldPrice_week[currencyCode],
@@ -599,6 +620,7 @@ def displayClick(btn1, btn2, btn3, btn4, btn5, btn6, country_dropdown,
                           title_text=text + ' History',
                           title_x=0.5,
                           title_font_color='white',
+                          font_color="blue",
                           plot_bgcolor='rgb(17,17,17)',
                           paper_bgcolor='rgb(17,17,17)',
                           legend=dict(bgcolor='white',
@@ -609,6 +631,6 @@ def displayClick(btn1, btn2, btn3, btn4, btn5, btn6, country_dropdown,
     msg = ""
     return html.Div(msg), fig, df_table.to_dict('records'), row_drop, gold_id, silver_id, platinum_id, Palladium_id
 
-
+ 
 if __name__ == '__main__':
-    app.run(debug=True, port=8050)
+    app.run(debug=False, port=8050)
