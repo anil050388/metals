@@ -60,7 +60,8 @@ app.layout = html.Div([
                             value=Country_Codes[0],
                             clearable=False,
                             style={'background': '#01020e', 'margin': '0px',
-                                   'font-weight': 'bold'}
+                                   'font-weight': 'bold',
+                                  'color':'white'}
                         )
                     ]),
                 ], className="seven columns"),
@@ -191,7 +192,7 @@ app.layout = html.Div([
                                                    'scrollZoom': False,
                                                    'showAxisDragHandles': True,
                                                    'showAxisRangeEntryBoxes': True},
-                          style={'background': 'black', 'padding-bottom': '0px', 'padding-left': '0px', 'height': '90vh', 'width': '80vw'})
+                          style={'background': 'black', 'padding-bottom': '0px', 'padding-left': '0px', 'height': '80vh', 'width': '80vw'})
             ], className="linechart1 text-center")
         ]),
 
@@ -373,7 +374,7 @@ def update_value(n_intervals):
         html.Div([
             html.Div('Last data update date:', style={
                      'text-align': 'right','color':'white'}),
-            html.Div(current_date, className='location_name')
+            html.Div(current_date, className='location_name',style={'color':'white'})
         ], className='date_time_row')
     ]
 
